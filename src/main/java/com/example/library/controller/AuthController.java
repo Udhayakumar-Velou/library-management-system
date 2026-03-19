@@ -4,8 +4,12 @@ import com.example.library.model.User;
 import com.example.library.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpSession;
+
+// ✅ ADD THIS (IMPORTANT FIX)
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 @Controller
 public class AuthController {
@@ -16,10 +20,10 @@ public class AuthController {
         this.service = service;
     }
 
-    // ✅ SHOW LOGIN PAGE (THIS FIXES YOUR ERROR)
+    // ✅ SHOW LOGIN PAGE
     @GetMapping("/login-ui")
     public String loginPage() {
-        return "login"; // login.html
+        return "login";
     }
 
     // ✅ LOGIN
@@ -35,7 +39,6 @@ public class AuthController {
         }
 
         session.setAttribute("user", user);
-
         return "redirect:/books-ui";
     }
 
@@ -46,18 +49,23 @@ public class AuthController {
         return "redirect:/login-ui";
     }
 
-    // SHOW REGISTER PAGE
+    // ✅ SHOW REGISTER PAGE
     @GetMapping("/register-ui")
-    public String registerPage() {
+    public String registerPage(Model model) {
+        model.addAttribute("user", new User());
         return "register";
     }
 
-    // HANDLE REGISTER
+    // ✅ REGISTER (VALIDATION WORKING)
     @PostMapping("/register-ui")
-    public String register(@RequestParam String email,
-                           @RequestParam String password) {
+    public String register(@ModelAttribute @Valid User user,
+                           BindingResult result) {
 
-        service.register(email, password, "USER"); // ✅ FORCE USER
+        if (result.hasErrors()) {
+            return "register";
+        }
+
+        service.register(user.getEmail(), user.getPassword(), "USER");
 
         return "redirect:/login-ui";
     }

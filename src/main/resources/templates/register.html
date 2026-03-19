@@ -45,13 +45,20 @@
 <div class="card">
     <h2>Register</h2>
 
-    <form action="/register-ui" method="post">
-        <input type="text" name="email" placeholder="Email" required />
-        <input type="password" name="password" placeholder="Password" required />
+    <form th:action="@{/register-ui}" th:object="${user}" method="post">
 
-        <!-- ❌ NO ROLE FIELD -->
+        <input type="email" th:field="*{email}" placeholder="Email" />
+
+        <div style="color:red" th:if="${#fields.hasErrors('email')}"
+             th:errors="*{email}"></div>
+
+        <input type="password" th:field="*{password}" placeholder="Password" />
+
+        <div style="color:red" th:if="${#fields.hasErrors('password')}"
+             th:errors="*{password}"></div>
 
         <button type="submit">Register</button>
+
     </form>
 </div>
 

@@ -4,7 +4,7 @@ import com.example.library.model.Book;
 import com.example.library.model.User;
 import com.example.library.service.BookService;
 import com.example.library.service.BorrowService;
-import jakarta.servlet.http.HttpSession; // ✅ IMPORTANT FIX
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +22,7 @@ public class BookUIController {
         this.borrowService = borrowService;
     }
 
+    // ✅ SHOW BOOKS
     @GetMapping("/books-ui")
     public String getBooks(@RequestParam(required = false) String keyword,
                            Model model,
@@ -37,24 +38,29 @@ public class BookUIController {
 
         model.addAttribute("books", books);
 
-        // ✅ GET USER FROM SESSION
         User user = (User) session.getAttribute("user");
 
         if (user != null) {
             model.addAttribute("userEmail", user.getEmail());
             model.addAttribute("role", user.getRole());
         } else {
-            model.addAttribute("userEmail", "Guest");
-            model.addAttribute("role", "USER");
+            return "redirect:/login-ui";
         }
 
         return "books";
     }
 
-    // ✅ ADD BOOK
+    // ✅ ADD BOOK (ADMIN ONLY)
     @PostMapping("/books-ui/add")
     public String addBook(@RequestParam String title,
-                          @RequestParam String author) {
+                          @RequestParam String author,
+                          HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (user == null || !user.getRole().equals("ADMIN")) {
+            return "redirect:/books-ui?error=unauthorized";
+        }
 
         Book book = new Book();
         book.setTitle(title);
@@ -65,30 +71,50 @@ public class BookUIController {
         return "redirect:/books-ui";
     }
 
-    // ✅ BORROW
+    // ✅ BORROW (USER ONLY)
     @PostMapping("/books-ui/borrow/{id}")
     public String borrow(@PathVariable Long id,
                          HttpSession session) {
 
         User user = (User) session.getAttribute("user");
 
+        if (user == null || !user.getRole().equals("USER")) {
+            return "redirect:/books-ui?error=unauthorized";
+        }
+
         borrowService.requestBook(user.getEmail(), id);
 
         return "redirect:/books-ui";
     }
 
-    // ✅ DELETE
+    // ✅ DELETE (ADMIN ONLY)
     @PostMapping("/books-ui/delete/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable Long id,
+                         HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (user == null || !user.getRole().equals("ADMIN")) {
+            return "redirect:/books-ui?error=unauthorized";
+        }
+
         service.deleteBook(id);
+
         return "redirect:/books-ui";
     }
 
-    // ✅ UPDATE
+    // ✅ UPDATE (ADMIN ONLY)
     @PostMapping("/books-ui/update/{id}")
     public String update(@PathVariable Long id,
                          @RequestParam String title,
-                         @RequestParam String author) {
+                         @RequestParam String author,
+                         HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (user == null || !user.getRole().equals("ADMIN")) {
+            return "redirect:/books-ui?error=unauthorized";
+        }
 
         Book book = new Book();
         book.setTitle(title);

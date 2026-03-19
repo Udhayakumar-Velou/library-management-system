@@ -3,45 +3,47 @@ package com.example.library.service;
 import com.example.library.model.User;
 import com.example.library.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class UserService {
 
-    private final UserRepository repo;
+    @Autowired
+    private UserRepository repository;
 
-    public UserService(UserRepository repo) {
-        this.repo = repo;
-    }
+    // 🔐 Password encoder
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    // REGISTER
+    // ✅ REGISTER USER
     public User register(String email, String password, String role) {
 
         User user = new User();
         user.setEmail(email);
-        user.setPassword(password);
+
+        // 🔐 Encrypt password
+        user.setPassword(encoder.encode(password));
+
         user.setRole(role);
 
-        return repo.save(user);
+        return repository.save(user);
     }
 
-    // LOGIN
+    // ✅ LOGIN USER
     public User login(String email, String password) {
-        User user = repo.findByEmail(email).orElseThrow();
 
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid password");
+        User user = repository.findByEmail(email);
+
+        // 🔐 Check encrypted password
+        if (user != null && encoder.matches(password, user.getPassword())) {
+            return user;
         }
 
-        return user;
+        return null;
     }
 
-    // GET USER
-    public User findByEmail(String email) {
-        return repo.findByEmail(email).orElseThrow();
-    }
-
-    // ✅ FIX: DELETE ALL USERS
+    // (Optional)
     public void deleteAllUsers() {
-        repo.deleteAll();
+        repository.deleteAll();
     }
 }
