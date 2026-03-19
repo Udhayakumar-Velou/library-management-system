@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Library App</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            margin: 0;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background-color: #222;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* CENTER CARD */
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 85vh;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            width: 350px;
+        }
+
+        a.btn {
+            display: block;
+            margin: 10px 0;
+            padding: 12px;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .btn-books {
+            background: #007bff;
+        }
+
+        .btn-borrow {
+            background: #28a745;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+
+    <div class="nav-left">
+        <a href="/">Home</a>
+        <a href="/books-ui">Books</a>
+
+        <!-- 🔥 ADMIN ONLY -->
+        <a th:if="${session.user.role == 'ADMIN'}" href="/borrow-ui">
+            Borrow Requests
+        </a>
+    </div>
+
+    <div>
+        <a href="/logout">Logout</a>
+    </div>
+
+</div>
+
+<div class="center">
+
+    <div class="card">
+
+        <h2>📚 Library Management System</h2>
+
+        <a href="/books-ui" class="btn btn-books">View Books</a>
+
+        <!-- 🔥 ADMIN ONLY -->
+        <a th:if="${session.user.role == 'ADMIN'}"
+           href="/borrow-ui"
+           class="btn btn-borrow">
+            View Borrow Requests
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

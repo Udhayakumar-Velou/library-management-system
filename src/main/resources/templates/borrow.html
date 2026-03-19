@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Borrow Requests</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .approved { color: green; }
+        .pending { color: orange; }
+        .rejected { color: red; }
+
+        button {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .approve {
+            background: green;
+            color: white;
+        }
+
+        .reject {
+            background: red;
+            color: white;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="navbar">
+    <a href="/">Home</a>
+    <a href="/books-ui">Books</a>
+    <a href="/borrow-ui">Borrow Requests</a>
+    <a href="/logout">Logout</a>
+</div>
+<div class="container">
+
+    <h2>📄 Borrow Requests</h2>
+
+    <div th:each="b : ${requests}" class="card">
+
+        <div>
+            <strong th:text="${b.userEmail}"></strong>
+            → Book ID: <span th:text="${b.bookId}"></span>
+        </div>
+
+        <div class="status"
+             th:classappend="${b.status == 'APPROVED'} ? 'approved' :
+                              (${b.status == 'REJECTED'} ? 'rejected' : 'pending')">
+
+            <span th:text="${b.status}"></span>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div th:if="${b.status == 'PENDING'}">
+
+            <form th:action="@{'/borrow-ui/approve/' + ${b.id}}" method="post" style="display:inline;">
+                <button class="approve">Approve</button>
+            </form>
+
+            <form th:action="@{'/borrow-ui/reject/' + ${b.id}}" method="post" style="display:inline;">
+                <button class="reject">Reject</button>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

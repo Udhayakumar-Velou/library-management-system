@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Library Books</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background-color: #222;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+        }
+
+        .welcome {
+            margin-bottom: 15px;
+        }
+
+        /* CARD */
+        .card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .book-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input {
+            padding: 8px;
+            margin-right: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .borrow-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .add-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+
+    <div class="nav-left">
+        <a href="/">Home</a>
+        <a href="/books-ui">Books</a>
+
+        <!-- 🔥 ADMIN ONLY -->
+        <a th:if="${user.role == 'ADMIN'}" href="/borrow-ui">
+            Borrow Requests
+        </a>
+    </div>
+
+    <div>
+        <a href="/logout">Logout</a>
+    </div>
+
+</div>
+
+<div class="container">
+
+    <!-- USER INFO -->
+    <p class="welcome">
+        Welcome, <b th:text="${user.email}"></b>
+        (<span th:text="${user.role}"></span>)
+    </p>
+
+    <h2>📚 Library Books</h2>
+
+    <!-- BOOK LIST -->
+    <div th:each="book : ${books}" class="card">
+
+        <div class="book-item">
+
+            <div>
+                <strong th:text="${book.title}"></strong> -
+                <span th:text="${book.author}"></span>
+            </div>
+
+            <!-- USER ONLY -->
+            <form th:if="${user.role == 'USER'}"
+                  th:action="@{'/books-ui/borrow/' + ${book.id}}"
+                  method="post">
+
+                <input type="text" name="userEmail" placeholder="Your Email" required />
+                <button class="borrow-btn">Borrow</button>
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- ADMIN ONLY -->
+    <div class="card" th:if="${user.role == 'ADMIN'}">
+
+        <h3>Add Book</h3>
+
+        <form action="/books-ui/add" method="post">
+            <input type="text" name="title" placeholder="Title" required />
+            <input type="text" name="author" placeholder="Author" required />
+            <button class="add-btn">Add Book</button>
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>
