@@ -2,11 +2,11 @@
 <html>
 <head>
     <title>Register</title>
-
     <style>
         body {
-            font-family: Arial;
-            background: linear-gradient(to right, #43cea2, #185a9d);
+            background: black;
+            color: gold;
+            font-family: 'Segoe UI';
             display: flex;
             justify-content: center;
             align-items: center;
@@ -14,24 +14,27 @@
         }
 
         .card {
-            background: white;
+            background: #111;
             padding: 30px;
             border-radius: 10px;
-            width: 320px;
+            width: 300px;
+            border: 1px solid gold;
             text-align: center;
         }
 
-        input, select {
+        input {
             width: 90%;
             padding: 10px;
             margin: 10px 0;
+            border-radius: 6px;
+            border: none;
         }
 
         button {
-            padding: 10px;
             width: 100%;
-            background: green;
-            color: white;
+            padding: 10px;
+            background: gold;
+            color: black;
             border: none;
         }
     </style>
@@ -46,16 +49,10 @@
         <input type="text" name="email" placeholder="Email" required />
         <input type="password" name="password" placeholder="Password" required />
 
-        <!-- 🔥 ROLE SELECTION -->
-        <select name="role">
-            <option value="USER">User</option>
-<!--            <option value="ADMIN">Admin</option>-->
-        </select>
+        <!-- ❌ NO ROLE FIELD -->
 
         <button type="submit">Register</button>
     </form>
-
-    <p><a href="/login-ui">Already have account? Login</a></p>
 </div>
 
 </body>

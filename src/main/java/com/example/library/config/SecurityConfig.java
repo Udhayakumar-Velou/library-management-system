@@ -13,11 +13,12 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form.disable())   // 🔥 IMPORTANT
-                .logout(logout -> logout.disable()); // 🔥 IMPORTANT
+                .logout(logout -> logout.disable()); // 🔥 THIS LINE FIXES YOUR ISSUE
 
         return http.build();
     }

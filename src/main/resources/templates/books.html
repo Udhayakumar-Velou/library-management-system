@@ -1,84 +1,149 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Library Books</title>
+    <title>Library App</title>
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0b0b0b;
+            color: white;
             margin: 0;
         }
 
         /* NAVBAR */
         .navbar {
-            background-color: #222;
-            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
+            padding: 15px 40px;
+            background: #000;
+            border-bottom: 1px solid gold;
         }
 
-        .nav-left {
-            display: flex;
-            gap: 20px;
-        }
-
-        .navbar a {
-            color: white;
+        .nav-left a {
+            color: gold;
+            margin-right: 25px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
         }
 
-        .navbar a:hover {
-            text-decoration: underline;
+        .nav-right {
+            color: gold;
+            font-weight: 600;
         }
 
         /* CONTAINER */
         .container {
-            max-width: 900px;
-            margin: 30px auto;
+            max-width: 850px;
+            margin: 50px auto;
         }
 
-        .welcome {
-            margin-bottom: 15px;
+        h2 {
+            color: gold;
+        }
+
+        /* SEARCH */
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid gold;
+            background: #111;
+            color: white;
+        }
+
+        .search-bar button {
+            background: gold;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         /* CARD */
         .card {
-            background: white;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #111;
+            border: 1px solid rgba(255,215,0,0.2);
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 14px;
         }
 
-        .book-item {
+        .book-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        input {
-            padding: 8px;
-            margin-right: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+        .book-title {
+            font-size: 16px;
         }
 
-        button {
-            padding: 8px 12px;
+        /* BUTTONS */
+        .btn {
+            padding: 7px 12px;
+            border-radius: 6px;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
+            font-weight: 600;
         }
 
         .borrow-btn {
-            background-color: #007bff;
+            background: gold;
+            color: black;
+        }
+
+        .delete-btn {
+            background: #ff3b3b;
             color: white;
         }
 
+        .edit-btn {
+            background: orange;
+            color: black;
+        }
+
         .add-btn {
-            background-color: #28a745;
+            background: transparent;
+            border: 1px solid gold;
+            color: gold;
+        }
+
+        /* EDIT SECTION */
+        .edit-form {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-form input {
+            padding: 6px;
+            border-radius: 6px;
+            border: none;
+            background: #222;
+            color: white;
+            width: 120px;
+        }
+
+        /* ADD BOOK */
+        .add-box {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-box input {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #222;
             color: white;
         }
 
@@ -89,65 +154,88 @@
 
 <!-- NAVBAR -->
 <div class="navbar">
-
     <div class="nav-left">
         <a href="/">Home</a>
         <a href="/books-ui">Books</a>
-
-        <!-- 🔥 ADMIN ONLY -->
-        <a th:if="${user.role == 'ADMIN'}" href="/borrow-ui">
-            Borrow Requests
-        </a>
-    </div>
-
-    <div>
+        <a th:if="${role == 'ADMIN'}" href="/borrow-ui">Requests</a>
         <a href="/logout">Logout</a>
     </div>
 
+    <div class="nav-right">
+        👤 <span th:text="${userEmail}"></span> (<span th:text="${role}"></span>)
+    </div>
 </div>
 
+<!-- CONTENT -->
 <div class="container">
 
-    <!-- USER INFO -->
-    <p class="welcome">
-        Welcome, <b th:text="${user.email}"></b>
-        (<span th:text="${user.role}"></span>)
-    </p>
+    <h2>📚 Book Collection</h2>
 
-    <h2>📚 Library Books</h2>
+    <!-- SEARCH -->
+    <form method="get" action="/books-ui" class="search-bar">
+        <input type="text" name="keyword" placeholder="Search books..." />
+        <button>Search</button>
+    </form>
 
     <!-- BOOK LIST -->
     <div th:each="book : ${books}" class="card">
 
-        <div class="book-item">
+        <!-- TOP ROW -->
+        <div class="book-row">
 
-            <div>
+            <div class="book-title">
                 <strong th:text="${book.title}"></strong> -
                 <span th:text="${book.author}"></span>
             </div>
 
-            <!-- USER ONLY -->
-            <form th:if="${user.role == 'USER'}"
-                  th:action="@{'/books-ui/borrow/' + ${book.id}}"
-                  method="post">
+            <div>
 
-                <input type="text" name="userEmail" placeholder="Your Email" required />
-                <button class="borrow-btn">Borrow</button>
+                <!-- USER ONLY -->
+                <div th:if="${role == 'USER'}" style="display:inline;">
+                    <form th:action="@{'/books-ui/borrow/' + ${book.id}}" method="post">
+                        <button class="btn borrow-btn">Borrow</button>
+                    </form>
+                </div>
+
+                <!-- ADMIN ONLY -->
+                <div th:if="${role == 'ADMIN'}" style="display:inline;">
+
+                    <form th:action="@{'/books-ui/delete/' + ${book.id}}" method="post" style="display:inline;">
+                        <button class="btn delete-btn">Delete</button>
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- EDIT FORM (ADMIN ONLY) -->
+        <div th:if="${role == 'ADMIN'}" class="edit-form">
+
+            <form th:action="@{'/books-ui/update/' + ${book.id}}" method="post">
+
+                <input type="text" name="title" placeholder="New Title" required />
+                <input type="text" name="author" placeholder="New Author" required />
+
+                <button class="btn edit-btn">Update</button>
+
             </form>
 
         </div>
 
     </div>
 
-    <!-- ADMIN ONLY -->
-    <div class="card" th:if="${user.role == 'ADMIN'}">
-
-        <h3>Add Book</h3>
+    <!-- ADD BOOK -->
+    <div th:if="${role == 'ADMIN'}" class="card add-box">
 
         <form action="/books-ui/add" method="post">
+
             <input type="text" name="title" placeholder="Title" required />
             <input type="text" name="author" placeholder="Author" required />
-            <button class="add-btn">Add Book</button>
+
+            <button class="btn add-btn">Add Book</button>
+
         </form>
 
     </div>

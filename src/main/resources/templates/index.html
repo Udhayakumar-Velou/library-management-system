@@ -5,61 +5,43 @@
 
     <style>
         body {
-            font-family: Arial;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
+            font-family: 'Segoe UI';
+            background: #0f0f0f;
+            color: white;
             margin: 0;
         }
 
-        /* NAVBAR */
         .navbar {
-            background-color: #222;
-            padding: 12px 20px;
+            background: black;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
+            border-bottom: 2px solid gold;
         }
 
-        .nav-left {
-            display: flex;
-            gap: 20px;
-        }
-
-        .navbar a {
-            color: white;
+        .nav-left a {
+            color: gold;
+            margin-right: 20px;
             text-decoration: none;
-            font-weight: bold;
         }
 
-        /* CENTER CARD */
-        .center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 85vh;
+        .nav-right {
+            color: gold;
         }
 
-        .card {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
+        .container {
             text-align: center;
-            width: 350px;
+            margin-top: 100px;
         }
 
-        a.btn {
+        .btn {
             display: block;
-            margin: 10px 0;
+            margin: 15px auto;
             padding: 12px;
-            color: white;
-            border-radius: 6px;
+            width: 200px;
+            background: gold;
+            color: black;
             text-decoration: none;
-        }
-
-        .btn-books {
-            background: #007bff;
-        }
-
-        .btn-borrow {
-            background: #28a745;
         }
 
     </style>
@@ -67,42 +49,25 @@
 
 <body>
 
-<!-- NAVBAR -->
 <div class="navbar">
-
     <div class="nav-left">
         <a href="/">Home</a>
         <a href="/books-ui">Books</a>
-
-        <!-- 🔥 ADMIN ONLY -->
-        <a th:if="${session.user.role == 'ADMIN'}" href="/borrow-ui">
-            Borrow Requests
-        </a>
-    </div>
-
-    <div>
+        <a th:if="${role == 'ADMIN'}" href="/borrow-ui">Requests</a>
         <a href="/logout">Logout</a>
     </div>
 
+    <div class="nav-right">
+        👤 <span th:text="${userEmail}"></span>
+        (<span th:text="${role}"></span>)
+    </div>
 </div>
 
-<div class="center">
+<div class="container">
+    <h1>📚 Library System</h1>
 
-    <div class="card">
-
-        <h2>📚 Library Management System</h2>
-
-        <a href="/books-ui" class="btn btn-books">View Books</a>
-
-        <!-- 🔥 ADMIN ONLY -->
-        <a th:if="${session.user.role == 'ADMIN'}"
-           href="/borrow-ui"
-           class="btn btn-borrow">
-            View Borrow Requests
-        </a>
-
-    </div>
-
+    <a href="/books-ui" class="btn">Books</a>
+    <a th:if="${role == 'ADMIN'}" href="/borrow-ui" class="btn">Requests</a>
 </div>
 
 </body>

@@ -5,87 +5,162 @@
 
     <style>
         body {
-            font-family: Arial;
-            background: #f4f6f8;
-            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0b0b0b;
+            color: white;
+            margin: 0;
         }
 
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 40px;
+            background: #000;
+            border-bottom: 1px solid gold;
+        }
+
+        .nav-left a {
+            color: gold;
+            margin-right: 25px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .nav-right {
+            color: gold;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
         .container {
             max-width: 800px;
-            margin: auto;
+            margin: 50px auto;
         }
 
+        h2 {
+            color: gold;
+            margin-bottom: 25px;
+        }
+
+        /* CARD */
         .card {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #111;
+            border: 1px solid rgba(255,215,0,0.2);
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
         }
 
+        .card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 15px rgba(255,215,0,0.2);
+        }
+
+        .left {
+            line-height: 1.6;
+        }
+
+        /* STATUS BADGES */
         .status {
             font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 5px;
         }
 
-        .approved { color: green; }
-        .pending { color: orange; }
-        .rejected { color: red; }
+        .approved {
+            background: rgba(0,255,0,0.2);
+            color: #00ff88;
+        }
 
-        button {
-            padding: 6px 10px;
+        .pending {
+            background: rgba(255,165,0,0.2);
+            color: orange;
+        }
+
+        .rejected {
+            background: rgba(255,0,0,0.2);
+            color: #ff4d4d;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 7px 12px;
+            border-radius: 6px;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            margin-left: 5px;
+            font-weight: 600;
         }
 
-        .approve {
-            background: green;
+        .approve-btn {
+            background: gold;
+            color: black;
+            margin-right: 8px;
+        }
+
+        .reject-btn {
+            background: #ff3b3b;
             color: white;
         }
 
-        .reject {
-            background: red;
-            color: white;
+        .actions {
+            display: flex;
+            gap: 8px;
         }
 
     </style>
 </head>
 
 <body>
+
+<!-- NAVBAR -->
 <div class="navbar">
-    <a href="/">Home</a>
-    <a href="/books-ui">Books</a>
-    <a href="/borrow-ui">Borrow Requests</a>
-    <a href="/logout">Logout</a>
+    <div class="nav-left">
+        <a href="/">Home</a>
+        <a href="/books-ui">Books</a>
+        <a href="/borrow-ui">Requests</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <div class="nav-right">
+        👤 <span th:text="${userEmail}"></span> (<span th:text="${role}"></span>)
+    </div>
 </div>
+
+<!-- CONTENT -->
 <div class="container">
 
     <h2>📄 Borrow Requests</h2>
 
     <div th:each="b : ${requests}" class="card">
 
-        <div>
-            <strong th:text="${b.userEmail}"></strong>
-            → Book ID: <span th:text="${b.bookId}"></span>
+        <!-- LEFT SIDE -->
+        <div class="left">
+            <strong th:text="${b.userEmail}"></strong><br/>
+            Book ID: <span th:text="${b.bookId}"></span><br/>
+
+            <span class="status"
+                  th:text="${b.status}"
+                  th:classappend="${b.status == 'APPROVED'} ? ' approved' :
+                                  (${b.status == 'REJECTED'} ? ' rejected' : ' pending')">
+            </span>
         </div>
 
-        <div class="status"
-             th:classappend="${b.status == 'APPROVED'} ? 'approved' :
-                              (${b.status == 'REJECTED'} ? 'rejected' : 'pending')">
+        <!-- ACTIONS -->
+        <div class="actions" th:if="${b.status == 'PENDING'}">
 
-            <span th:text="${b.status}"></span>
-        </div>
-
-        <!-- ACTION BUTTONS -->
-        <div th:if="${b.status == 'PENDING'}">
-
-            <form th:action="@{'/borrow-ui/approve/' + ${b.id}}" method="post" style="display:inline;">
-                <button class="approve">Approve</button>
+            <form th:action="@{'/borrow-ui/approve/' + ${b.id}}" method="post">
+                <button class="btn approve-btn">Approve</button>
             </form>
 
-            <form th:action="@{'/borrow-ui/reject/' + ${b.id}}" method="post" style="display:inline;">
-                <button class="reject">Reject</button>
+            <form th:action="@{'/borrow-ui/reject/' + ${b.id}}" method="post">
+                <button class="btn reject-btn">Reject</button>
             </form>
 
         </div>
